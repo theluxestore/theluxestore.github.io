@@ -1,22 +1,102 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>The Luxe Store</title>
-  <style>
-    body {
-      background-color: black;
-      color: gold;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding-top: 100px;
-    }
-    h1 {
-      font-size: 50px;
-    }
-  </style>
+  <meta name="description" content="Premium Online Shopping at The Luxe Store" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Welcome to The Luxe Store 💎</h1>
-  <p>Luxury you deserve</p>
+  <header class="header">
+    <div class="inner">
+      <div class="brand">
+        <div class="logo">L</div>
+        <div>
+          <div style="font-weight:700">The Luxe Store</div>
+          <div style="font-size:12px;color:#bbb">Premium &amp; Exclusive</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#collections">Collections</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero" id="home" aria-label="Hero">
+    <div class="hero-inner">
+      <h1>Premium Online Shopping at THE LUXE</h1>
+      <p>Shop Top Brands in Electronics, Fashion, Cosmetics & More — Best Deals with Fast Shipping</p>
+      <a class="btn" href="#collections">Shop Now</a>
+    </div>
+  </section>
+
+  <section class="section" id="collections">
+    <div class="container">
+      <h2>Featured</h2>
+      <div class="grid">
+        <div class="card">
+          <img src="https://via.placeholder.com/400x300.png?text=Luxury+Watch" alt="Watch" style="width:100%;border-radius:8px;margin-bottom:12px" />
+          <h3>Luxury Watch</h3>
+          <p style="color:rgba(255,255,255,0.7)">Timeless design. Premium quality.</p>
+        </div>
+        <div class="card">
+          <img src="https://via.placeholder.com/400x300.png?text=Designer+Bag" alt="Bag" style="width:100%;border-radius:8px;margin-bottom:12px" />
+          <h3>Designer Bag</h3>
+          <p style="color:rgba(255,255,255,0.7)">Elegant and stylish for every occasion.</p>
+        </div>
+        <div class="card">
+          <img src="https://via.placeholder.com/400x300.png?text=Premium+Shoes" alt="Shoes" style="width:100%;border-radius:8px;margin-bottom:12px" />
+          <h3>Premium Shoes</h3>
+          <p style="color:rgba(255,255,255,0.7)">Comfort meets luxury.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="container">
+      <h2>Why Choose LUXE</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Free Shipping</h3>
+          <p style="color:rgba(255,255,255,0.7)">On orders above a certain amount.</p>
+        </div>
+        <div class="card">
+          <h3>Secure Payments</h3>
+          <p style="color:rgba(255,255,255,0.7)">Fast and secure checkout.</p>
+        </div>
+        <div class="card">
+          <h3>Premium Support</h3>
+          <p style="color:rgba(255,255,255,0.7)">We’re here to help 24/7.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="contact">
+    <div class="container">
+      <h2>Contact Us</h2>
+      <div class="contact-form">
+        <form action="#" method="POST" onsubmit="alert('Message sent (demo)');return false;">
+          <label>Your Name</label>
+          <input type="text" name="name" required />
+          <label>Your Email</label>
+          <input type="email" name="email" required />
+          <label>Your Message</label>
+          <textarea name="message" rows="5"></textarea>
+          <div style="text-align:center;margin-top:12px">
+            <button class="btn" type="submit">Send Message</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 The Luxe Store — All Rights Reserved.
+  </footer>
 </body>
 </html>
