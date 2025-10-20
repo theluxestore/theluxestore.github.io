@@ -24,6 +24,7 @@
       </nav>
     </div>
   </header>
+<div id="products"></div>
 
   <section class="hero" id="home" aria-label="Hero">
     <div class="hero-inner">
@@ -136,7 +137,7 @@
       container.appendChild(card);
     });
 
-    document.body.appendChild(container);
+    document.getElementryById('products').appendChild(container);
   }
 
   loadProducts();
