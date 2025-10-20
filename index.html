@@ -97,6 +97,50 @@
 
   <footer>
     © 2025 The Luxe Store — All Rights Reserved.
-  </footer>
+  </footer><script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+<script>
+  // Supabase connection setup
+  const SUPABASE_URL = 'https://meqbcuidksqwdmaqwvwc.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lcWJjdWlka3Nxd2RtYXF3dndjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0MjU2MjMsImV4cCI6MjA3NjAwMTYyM30.HYdIGrRMwlOkiQkYBsUcIvPeVF2oAAUNPj8V-8PKuvs';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // Products show karne ka function
+  async function loadProducts() {
+    const { data, error } = await supabase.from('products').select('*');
+    if (error) {
+      console.error('Error:', error);
+      return;
+    }
+
+    const container = document.createElement('div');
+    container.style.display = 'grid';
+    container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(250px, 1fr))';
+    container.style.gap = '20px';
+    container.style.padding = '20px';
+    container.style.color = 'white';
+
+    data.forEach(p => {
+      const card = document.createElement('div');
+      card.style.border = '1px solid gold';
+      card.style.borderRadius = '15px';
+      card.style.padding = '10px';
+      card.style.background = '#111';
+
+      card.innerHTML = `
+        <img src="${p.image}" width="200" height="200" style="border-radius:10px;"/><br/>
+        <strong>${p.name}</strong><br/>
+        <span>Rs ${p.price}</span><br/>
+        <p>${p.description}</p>
+      `;
+      container.appendChild(card);
+    });
+
+    document.body.appendChild(container);
+  }
+
+  loadProducts();
+</script>
+
 </body>
 </html>
