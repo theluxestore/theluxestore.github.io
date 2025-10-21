@@ -6,6 +6,12 @@
   <title>The Luxe Store</title>
   <meta name="description" content="Premium Online Shopping at The Luxe Store" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Small styles for cart buttons */
+    .btn { background: #ffd700; color:#000; padding:8px 12px; border-radius:8px; border:none; cursor:pointer; font-weight:700; }
+    .btn-small { padding:6px 10px; font-size:13px; border-radius:6px; }
+    .cart-line { display:flex; justify-content:space-between; gap:10px; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.03); }
+  </style>
 </head>
 <body>
   <header class="header">
@@ -37,26 +43,12 @@
     <div class="container">
       <h2>Featured</h2>
       <div class="grid">
-        <div class="card">
-          <img src="https://via.placeholder.com/400x300.png?text=Luxury+Watch" alt="Watch" style="width:100%;border-radius:8px;margin-bottom:12px" />
-          <h3>Luxury Watch</h3>
-          <p style="color:rgba(255,255,255,0.7)">Timeless design. Premium quality.</p>
-        </div>
-        <div class="card">
-          <img src="https://via.placeholder.com/400x300.png?text=Designer+Bag" alt="Bag" style="width:100%;border-radius:8px;margin-bottom:12px" />
-          <h3>Designer Bag</h3>
-          <p style="color:rgba(255,255,255,0.7)">Elegant and stylish for every occasion.</p>
-        </div>
-        <div class="card">
-          <img src="https://via.placeholder.com/400x300.png?text=Premium+Shoes" alt="Shoes" style="width:100%;border-radius:8px;margin-bottom:12px" />
-          <h3>Premium Shoes</h3>
-          <p style="color:rgba(255,255,255,0.7)">Comfort meets luxury.</p>
-        </div>
+        <!-- Static sample cards (optional) -->
       </div>
     </div>
   </section>
 
-  <!-- ✅ Product section moved below Collections -->
+  <!-- Product section (dynamic) -->
   <section class="section" id="dynamic-products">
     <div class="container">
       <h2>Our Latest Products</h2>
@@ -68,18 +60,9 @@
     <div class="container">
       <h2>Why Choose LUXE</h2>
       <div class="grid">
-        <div class="card">
-          <h3>Free Shipping</h3>
-          <p style="color:rgba(255,255,255,0.7)">On orders above a certain amount.</p>
-        </div>
-        <div class="card">
-          <h3>Secure Payments</h3>
-          <p style="color:rgba(255,255,255,0.7)">Fast and secure checkout.</p>
-        </div>
-        <div class="card">
-          <h3>Premium Support</h3>
-          <p style="color:rgba(255,255,255,0.7)">We’re here to help 24/7.</p>
-        </div>
+        <div class="card"><h3>Free Shipping</h3></div>
+        <div class="card"><h3>Secure Payments</h3></div>
+        <div class="card"><h3>Premium Support</h3></div>
       </div>
     </div>
   </section>
@@ -89,12 +72,9 @@
       <h2>Contact Us</h2>
       <div class="contact-form">
         <form action="#" method="POST" onsubmit="alert('Message sent (demo)');return false;">
-          <label>Your Name</label>
-          <input type="text" name="name" required />
-          <label>Your Email</label>
-          <input type="email" name="email" required />
-          <label>Your Message</label>
-          <textarea name="message" rows="5"></textarea>
+          <label>Your Name</label><input type="text" name="name" required />
+          <label>Your Email</label><input type="email" name="email" required />
+          <label>Your Message</label><textarea name="message" rows="5"></textarea>
           <div style="text-align:center;margin-top:12px">
             <button class="btn" type="submit">Send Message</button>
           </div>
@@ -103,26 +83,50 @@
     </div>
   </section>
 
+  <!-- CART SECTION (before footer) -->
+  <section class="section" id="cart">
+    <div class="container">
+      <h2>Your Cart</h2>
+      <div id="cart-items" style="background:#111;padding:15px;border-radius:10px;margin-bottom:10px;color:white;"></div>
+      <div id="cart-total" style="font-weight:bold;color:gold;margin-bottom:8px;">Total: Rs 0</div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn" onclick="checkoutOrder()">Checkout</button>
+        <button class="btn btn-small" onclick="clearCart()" style="background:#333;color:#fff;">Clear Cart</button>
+      </div>
+      <div id="order-message" style="margin-top:10px;color:#8f8;"></div>
+    </div>
+  </section>
+
   <footer>
     © 2025 The Luxe Store — All Rights Reserved.
   </footer>
 
-  <!-- ✅ Supabase script -->
+  <!-- Supabase + Cart logic -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
-    // Supabase connection setup
+    // ---- CONFIG: Use your Supabase project URL & anon key (already set)
     const SUPABASE_URL = 'https://meqbcuidksqwdmaqwvwc.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lcWJjdWlka3Nxd2RtYXF3dndjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0MjU2MjMsImV4cCI6MjA3NjAwMTYyM30.HYdIGrRMwlOkiQkYBsUcIvPeVF2oAAUNPj8V-8PKuvs';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Products show karne ka function
-    async function loadProducts() {
-      const { data, error } = await supabase.from('products').select('*');
-      if (error) {
-        console.error('Error:', error);
-        return;
-      }
+    // Local cart
+    let cart = [];
 
+    // Load products from Supabase
+    async function loadProducts() {
+      try {
+        const { data, error } = await supabase.from('products').select('*').order('id', { ascending: true });
+        if (error) { console.error('Supabase error', error); return; }
+        renderProducts(data || []);
+      } catch (e) {
+        console.error('Load products error', e);
+      }
+    }
+
+    // Render product cards and Add to Cart buttons
+    function renderProducts(products) {
+      const root = document.getElementById('products');
+      root.innerHTML = '';
       const container = document.createElement('div');
       container.style.display = 'grid';
       container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(250px, 1fr))';
@@ -130,27 +134,124 @@
       container.style.padding = '20px';
       container.style.color = 'white';
 
-      data.forEach(p => {
+      products.forEach(p => {
         const card = document.createElement('div');
         card.style.border = '1px solid gold';
-        card.style.borderRadius = '15px';
-        card.style.padding = '10px';
+        card.style.borderRadius = '12px';
+        card.style.padding = '12px';
         card.style.background = '#111';
         card.style.textAlign = 'center';
-
+        card.style.minHeight = '360px';
+        const price = Number(p.price) || 0;
         card.innerHTML = `
-          <img src="${p.image}" width="220" height="220" style="border-radius:10px;margin-bottom:10px;"/><br/>
-          <strong>${p.name}</strong><br/>
-          <span>Rs ${p.price}</span><br/>
-          <p style="color:rgba(255,255,255,0.7)">${p.description}</p>
+          <img src="${p.image}" width="220" height="220" style="border-radius:10px;margin-bottom:10px;object-fit:cover;"/><br/>
+          <strong style="color:#ffd700">${escapeHtml(p.name)}</strong><br/>
+          <span style="color:#e6c200">Rs ${price}</span><br/>
+          <p style="color:rgba(255,255,255,0.7);min-height:40px">${escapeHtml(p.description || '')}</p>
+          <button class="btn" onclick="addToCart('${p.id}','${escapeJs(p.name)}', ${price})">Add to Cart</button>
         `;
         container.appendChild(card);
       });
 
-      document.getElementById('products').appendChild(container);
+      root.appendChild(container);
     }
 
+    // Utility to escape HTML
+    function escapeHtml(s){ if(!s) return ''; return s.replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+    // Utility to escape single quotes for onclick string param
+    function escapeJs(s){ return (s||'').replace(/'/g,"\\'").replace(/"/g,'\\"'); }
+
+    // Add to cart
+    function addToCart(id, name, price) {
+      const existing = cart.find(x => x.id === id);
+      if (existing) existing.qty++;
+      else cart.push({ id, name, price, qty: 1 });
+      updateCartDisplay();
+    }
+
+    // Remove item
+    function removeFromCart(id) {
+      cart = cart.filter(x => x.id !== id);
+      updateCartDisplay();
+    }
+
+    // Clear cart
+    function clearCart() {
+      if (!confirm('Are you sure you want to empty the cart?')) return;
+      cart = [];
+      updateCartDisplay();
+    }
+
+    // Update cart DOM
+    function updateCartDisplay() {
+      const cartContainer = document.getElementById('cart-items');
+      cartContainer.innerHTML = '';
+      let total = 0;
+      if (cart.length === 0) {
+        cartContainer.innerHTML = '<div style="color:#aaa">Your cart is empty.</div>';
+      } else {
+        cart.forEach(item => {
+          total += item.price * item.qty;
+          const row = document.createElement('div');
+          row.className = 'cart-line';
+          row.innerHTML = `
+            <div style="flex:1">${escapeHtml(item.name)} <small style="color:#bbb">x${item.qty}</small></div>
+            <div style="min-width:140px; text-align:right">
+              <span>Rs ${item.price * item.qty}</span>
+              <button onclick="decreaseQty('${item.id}')" class="btn btn-small" style="margin-left:8px;background:#444;color:#fff;">-</button>
+              <button onclick="increaseQty('${item.id}')" class="btn btn-small" style="margin-left:6px;background:#444;color:#fff;">+</button>
+              <button onclick="removeFromCart('${item.id}')" class="btn btn-small" style="margin-left:6px;background:#c33;color:#fff;">Remove</button>
+            </div>
+          `;
+          cartContainer.appendChild(row);
+        });
+      }
+      document.getElementById('cart-total').innerText = 'Total: Rs ' + total;
+    }
+
+    function increaseQty(id){ const it = cart.find(x=>x.id===id); if(it){ it.qty++; updateCartDisplay(); } }
+    function decreaseQty(id){ const it = cart.find(x=>x.id===id); if(it){ it.qty = Math.max(1, it.qty-1); updateCartDisplay(); } }
+
+    // Checkout: ask customer details, save order to Supabase orders table
+    async function checkoutOrder() {
+      if (cart.length === 0) { alert('Cart is empty'); return; }
+      const name = prompt('Enter your name:');
+      if (!name) { alert('Name is required'); return; }
+      const email = prompt('Enter your email (optional):');
+
+      const total = cart.reduce((s,i)=>s + (i.price * i.qty), 0);
+
+      // Prepare order payload
+      const order = {
+        items: cart,        // JSONB column
+        total: total,
+        customer_name: name,
+        customer_email: email || null
+      };
+
+      // Insert into Supabase orders table
+      try {
+        const { data, error } = await supabase.from('orders').insert([order]).select();
+        if (error) {
+          console.error('Order save error', error);
+          alert('Error saving order. Try again.');
+          return;
+        }
+        // success
+        const created = (data && data[0]) ? data[0] : null;
+        document.getElementById('order-message').innerText = 'Order placed! Order ID: ' + (created ? created.id : '—');
+        cart = [];
+        updateCartDisplay();
+        // Optional: you could redirect to a "thank you" page, or show order details.
+      } catch (e) {
+        console.error('Checkout exception', e);
+        alert('Checkout failed. See console.');
+      }
+    }
+
+    // initial load
     loadProducts();
+    updateCartDisplay();
   </script>
 </body>
 </html>
