@@ -1,46 +1,75 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Luxe Store — Admin</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The Luxe Store</title>
+  <meta name="description" content="Premium Online Shopping at The Luxe Store" />
+  <link rel="stylesheet" href="style.css" />
   <style>
-    body{background:#000;color:#fff;font-family:Arial,Helvetica,sans-serif;padding:20px}
-    .container{max-width:1100px;margin:0 auto}
-    h1{color:#ffd700}
-    table{width:100%;border-collapse:collapse;margin-top:12px}
-    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.06);text-align:left}
-    th{color:#e6c200}
-    button{background:#ffd700;color:#000;border:none;padding:6px 10px;border-radius:6px;cursor:pointer}
-    .btn-danger{background:#c33;color:#fff}
-    .small{font-size:13px;color:#bbb}
-    .flex{display:flex;gap:8px;align-items:center}
-    #filters{margin-top:10px;display:flex;gap:8px;align-items:center}
+    .btn { background:#ffd700;color:#000;padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700; }
+    .btn-small { padding:6px 10px;font-size:13px;border-radius:6px; }
+    .cart-line { display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05); }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Admin Panel — The Luxe Store</h1>
-    <div class="small">Manage orders — view items, update status, delete, export CSV, total sales</div>
-
-    <div id="filters">
-      <label>Filter status:
-        <select id="statusFilter">
-          <option value="all">All</option>
-          <option value="pending">Pending</option>
-          <option value="shipped">Shipped</option>
-          <option value="completed">Completed</option>
-        </select>
-      </label>
-      <button onclick="loadOrders()">Apply</button>
-      <div style="margin-left:auto;" class="small">Total sales shown for <strong id="salesStatus">All</strong></div>
-      <button onclick="exportCSV()" style="margin-left:8px">Export CSV</button>
+  <header class="header">
+    <div class="inner">
+      <div class="brand">
+        <div class="logo">L</div>
+        <div>
+          <div style="font-weight:700">The Luxe Store</div>
+          <div style="font-size:12px;color:#bbb">Premium &amp; Exclusive</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#collections">Collections</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
     </div>
+  </header>
 
-    <div id="ordersWrap"></div>
-    <div style="margin-top:14px" class="small">Tip: Click "View" to see order items.</div>
-  </div>
+  <section class="hero" id="home">
+    <div class="hero-inner">
+      <h1>Premium Online Shopping at THE LUXE</h1>
+      <p>Shop Top Brands — Electronics, Fashion, Cosmetics & More</p>
+      <a class="btn" href="#collections">Shop Now</a>
+    </div>
+  </section>
 
+  <!-- Featured (optional static) -->
+  <section class="section" id="collections">
+    <div class="container"><h2>Featured</h2></div>
+  </section>
+
+  <!-- Dynamic Products -->
+  <section class="section" id="dynamic-products">
+    <div class="container">
+      <h2>Our Latest Products</h2>
+      <div id="products"></div>
+    </div>
+  </section>
+
+  <!-- CART SECTION -->
+  <section class="section" id="cart">
+    <div class="container">
+      <h2>Your Cart 🛒</h2>
+      <div id="cart-items" style="background:#111;padding:15px;border-radius:10px;color:white;margin-bottom:10px;"></div>
+      <div id="cart-total" style="color:gold;font-weight:bold;margin-bottom:8px;">Total: Rs 0</div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn" onclick="checkoutOrder()">Checkout</button>
+        <button class="btn btn-small" style="background:#333;color:#fff;" onclick="clearCart()">Clear Cart</button>
+      </div>
+      <div id="order-message" style="margin-top:10px;color:#8f8;"></div>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 The Luxe Store — All Rights Reserved.
+  </footer>
+
+  <!-- Supabase + Logic -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
     // ---------- CONFIG ----------
@@ -48,120 +77,103 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lcWJjdWlka3Nxd2RtYXF3dndjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0MjU2MjMsImV4cCI6MjA3NjAwMTYyM30.HYdIGrRMwlOkiQkYBsUcIvPeVF2oAAUNPj8V-8PKuvs';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Simple demo password (change this!)
-    const ADMIN_PASSWORD = 'admin123';
+    // ---------- VARIABLES ----------
+    let cart = [];
 
-    // Ask for password
-    (function askPass(){
-      const p = prompt('Enter admin password:');
-      if(!p || p !== ADMIN_PASSWORD){
-        alert('Access denied.');
-        document.body.innerHTML = '<h2 style="color:#ff8080">Access denied — wrong password</h2>';
-        throw new Error('Admin auth failed');
+    // ---------- FUNCTIONS ----------
+
+    // Load products from Supabase
+    async function loadProducts() {
+      const { data, error } = await supabase.from('products').select('*').order('id');
+      if (error) { console.error('Error loading products', error); return; }
+      renderProducts(data);
+    }
+
+    // Render product grid
+    function renderProducts(products) {
+      const root = document.getElementById('products');
+      root.innerHTML = '';
+      const grid = document.createElement('div');
+      grid.style.display = 'grid';
+      grid.style.gridTemplateColumns = 'repeat(auto-fit,minmax(250px,1fr))';
+      grid.style.gap = '20px';
+      grid.style.padding = '20px';
+      products.forEach(p => {
+        const card = document.createElement('div');
+        card.style.background = '#111';
+        card.style.border = '1px solid gold';
+        card.style.borderRadius = '12px';
+        card.style.padding = '12px';
+        card.style.textAlign = 'center';
+        const price = Number(p.price) || 0;
+        card.innerHTML = `
+          <img src="${p.image}" width="220" height="220" style="border-radius:10px;margin-bottom:10px;object-fit:cover;"/>
+          <strong style="color:#ffd700">${escapeHtml(p.name)}</strong><br/>
+          <span style="color:#e6c200">Rs ${price}</span><br/>
+          <p style="color:rgba(255,255,255,0.7)">${escapeHtml(p.description || '')}</p>
+          <button class="btn" onclick="addToCart('${p.id}','${escapeJs(p.name)}',${price})">Add to Cart</button>
+        `;
+        grid.appendChild(card);
+      });
+      root.appendChild(grid);
+    }
+
+    // Safe text functions
+    function escapeHtml(s){return s? s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])):'';}
+    function escapeJs(s){return (s||'').replace(/'/g,"\\'").replace(/"/g,'\\"');}
+
+    // --- CART OPERATIONS ---
+    function addToCart(id,name,price){
+      const existing=cart.find(x=>x.id===id);
+      if(existing) existing.qty++; else cart.push({id,name,price,qty:1});
+      updateCart();
+    }
+    function removeFromCart(id){ cart=cart.filter(x=>x.id!==id); updateCart(); }
+    function increaseQty(id){ const it=cart.find(x=>x.id===id); if(it){it.qty++; updateCart();}}
+    function decreaseQty(id){ const it=cart.find(x=>x.id===id); if(it){it.qty=Math.max(1,it.qty-1); updateCart();}}
+    function clearCart(){ if(confirm('Clear all items?')){cart=[]; updateCart();}}
+
+    // Update cart display
+    function updateCart(){
+      const box=document.getElementById('cart-items');
+      box.innerHTML='';
+      let total=0;
+      if(cart.length===0){ box.innerHTML='<div style="color:#aaa">Your cart is empty.</div>'; }
+      else{
+        cart.forEach(i=>{
+          total+=i.price*i.qty;
+          const line=document.createElement('div');
+          line.className='cart-line';
+          line.innerHTML=`
+            <div>${escapeHtml(i.name)} <small style="color:#bbb">x${i.qty}</small></div>
+            <div>
+              <span>Rs ${i.price*i.qty}</span>
+              <button class="btn-small" style="background:#444;color:#fff;margin-left:5px;" onclick="decreaseQty('${i.id}')">-</button>
+              <button class="btn-small" style="background:#444;color:#fff;margin-left:5px;" onclick="increaseQty('${i.id}')">+</button>
+              <button class="btn-small" style="background:#c33;color:#fff;margin-left:5px;" onclick="removeFromCart('${i.id}')">Remove</button>
+            </div>`;
+          box.appendChild(line);
+        });
       }
-    })();
-
-    // ---------- Load & Render Orders ----------
-    async function loadOrders(){
-      const filter = document.getElementById('statusFilter').value;
-      let query = supabase.from('orders').select('*').order('created_at', { ascending: false });
-      if(filter !== 'all') query = query.eq('status', filter);
-      const { data, error } = await query;
-      if(error){ console.error(error); alert('Error loading orders'); return; }
-      renderOrders(data || []);
-      // Show total sales for this filter
-      const total = (data || []).reduce((s,o)=> s + Number(o.total || 0), 0);
-      document.getElementById('salesStatus').innerText = filter === 'all' ? 'All' : filter;
-      // show total nicely
-      const el = document.getElementById('ordersWrap');
-      const html = <div style="margin-top:12px;color:#ffd">${(data||[]).length} order(s) — Total sum: Rs ${total}</div>; 
-      // insert above table
-      if(el) el.insertAdjacentHTML('afterbegin', html);
+      document.getElementById('cart-total').innerText='Total: Rs '+total;
     }
 
-    function renderOrders(orders){
-      const wrap = document.getElementById('ordersWrap');
-      wrap.innerHTML = '';
-      if(!orders || orders.length === 0){ wrap.innerHTML = '<div class="small" style="margin-top:10px">No orders found.</div>'; return; }
-
-      let html = '<table><thead><tr><th>ID</th><th>Customer</th><th>Total (Rs)</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>';
-      orders.forEach(o=>{
-        html += `<tr id="row-${o.id}">
-          <td>${o.id}</td>
-          <td>${escapeHtml(o.customer_name||'—')}<div class="small">${escapeHtml(o.customer_email||'')}</div></td>
-          <td>${o.total}</td>
-          <td>
-            <select onchange="updateStatus(${o.id}, this.value)">
-              <option value="pending" ${o.status==='pending'?'selected':''}>Pending</option>
-              <option value="shipped" ${o.status==='shipped'?'selected':''}>Shipped</option>
-              <option value="completed" ${o.status==='completed'?'selected':''}>Completed</option>
-            </select>
-          </td>
-          <td>${new Date(o.created_at).toLocaleString()}</td>
-          <td class="flex">
-            <button onclick='viewItems(${o.id})'>View</button>
-            <button class="btn-danger" onclick="deleteOrder(${o.id})">Delete</button>
-          </td>
-        </tr>`;
-      });
-      html += '</tbody></table>';
-      wrap.innerHTML = html;
+    // Checkout: save order in Supabase
+    async function checkoutOrder(){
+      if(cart.length===0){alert('Cart is empty');return;}
+      const name=prompt('Enter your name:'); if(!name) return;
+      const email=prompt('Enter your email (optional):');
+      const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
+      const order={items:cart,total,customer_name:name,customer_email:email||null};
+      const {data,error}=await supabase.from('orders').insert([order]).select();
+      if(error){alert('Error saving order!');console.error(error);return;}
+      document.getElementById('order-message').innerText='✅ Order Placed! Order ID: '+data[0].id;
+      cart=[]; updateCart();
     }
 
-    // ---------- Actions ----------
-    async function viewItems(orderId){
-      const { data, error } = await supabase.from('orders').select('items').eq('id', orderId).single();
-      if(error){ console.error(error); alert('Error fetching items'); return; }
-      const items = data.items || [];
-      let txt = Order ${orderId} items:\n\n;
-      items.forEach(it => {
-        txt += ${it.name} — Rs ${it.price} x ${it.qty}\n;
-      });
-      alert(txt);
-    }
-
-    async function updateStatus(orderId, newStatus){
-      const { data, error } = await supabase.from('orders').update({ status: newStatus }).eq('id', orderId).select();
-      if(error){ console.error(error); alert('Update failed'); return; }
-      alert('Status updated');
-      loadOrders();
-    }
-
-    async function deleteOrder(orderId){
-      if(!confirm('Delete order #' + orderId + '?')) return;
-      const { error } = await supabase.from('orders').delete().eq('id', orderId);
-      if(error){ console.error(error); alert('Delete failed'); return; }
-      document.getElementById('row-' + orderId).remove();
-      alert('Deleted');
-    }
-
-    // Export CSV
-    function exportCSV(){
-      // read currently displayed rows in table
-      const rows = Array.from(document.querySelectorAll('#ordersWrap table tbody tr'));
-      if(rows.length===0){ alert('No orders to export'); return; }
-      const csv = [];
-      csv.push(['id','customer_name','customer_email','status','total','created_at','items'].join(','));
-      rows.forEach(r=>{
-        const id = r.children[0].innerText.trim();
-        const cust = r.children[1].innerText.replace(/\n/g,' ').replace(/,/g,' ').trim();
-        const total = r.children[2].innerText.trim();
-        const status = r.children[3].querySelector('select').value;
-        const date = r.children[4].innerText.trim();
-        // fetch items from DOM not present — instead fetch from DB (async) - but to keep simple we'll get from DB then build CSV
-        csv.push([id, "${cust}", status, total, date].join(','));
-      });
-      const blob = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = 'orders_export.csv'; a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    // Utility: escape HTML
-    function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-    // Load on open
-    loadOrders();
+    // ---------- INITIAL CALL ----------
+    loadProducts();
+    updateCart();
   </script>
 </body>
 </html>
