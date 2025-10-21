@@ -9,106 +9,107 @@
   <style>  
     .btn { background: #ffd700; color:#000; padding:8px 12px; border-radius:8px; border:none; cursor:pointer; font-weight:700; }  
     .btn-small { padding:6px 10px; font-size:13px; border-radius:6px; }  
-    .cart-line { display:flex; justify-content:space-between; gap:10px; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.1); }  
+    .cart-line { display:flex; justify-content:space-between; gap:10px; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.03); }  
   </style>  
 </head>  
-
-<body style="background:#000;color:white;font-family:sans-serif;">  
-  <header class="header" style="background:#111;padding:15px 30px;display:flex;justify-content:space-between;align-items:center;">  
-    <div class="brand" style="display:flex;align-items:center;gap:10px;">  
-      <div class="logo" style="background:gold;color:black;font-weight:900;padding:8px 12px;border-radius:8px;">L</div>  
-      <div>  
-        <div style="font-weight:700">The Luxe Store</div>  
-        <div style="font-size:12px;color:#bbb">Premium &amp; Exclusive</div>  
+<body>  
+  <header class="header">  
+    <div class="inner">  
+      <div class="brand">  
+        <div class="logo">L</div>  
+        <div>  
+          <div style="font-weight:700">The Luxe Store</div>  
+          <div style="font-size:12px;color:#bbb">Premium & Exclusive</div>  
+        </div>  
       </div>  
+      <nav>  
+        <a href="#collections">Collections</a>  
+        <a href="#about">About</a>  
+        <a href="#contact">Contact</a>  
+      </nav>  
     </div>  
-    <nav>  
-      <a href="#collections" style="color:white;margin-right:15px;">Collections</a>  
-      <a href="#about" style="color:white;margin-right:15px;">About</a>  
-      <a href="#contact" style="color:white;">Contact</a>  
-    </nav>  
   </header>  
 
-  <section class="hero" style="text-align:center;padding:60px 20px;background:#111;">  
-    <h1 style="font-size:28px;color:gold;">Premium Online Shopping at THE LUXE</h1>  
-    <p>Shop Top Brands in Electronics, Fashion, Cosmetics & More — Best Deals with Fast Shipping</p>  
-    <a class="btn" href="#collections">Shop Now</a>  
+  <section class="hero" id="home" aria-label="Hero">  
+    <div class="hero-inner">  
+      <h1>Premium Online Shopping at THE LUXE</h1>  
+      <p>Shop Top Brands in Electronics, Fashion, Cosmetics & More — Best Deals with Fast Shipping</p>  
+      <a class="btn" href="#collections">Shop Now</a>  
+    </div>  
   </section>  
 
-  <!-- Featured Section -->
-  <section class="section" id="collections" style="padding:40px 20px;text-align:center;">  
-    <h2>Featured</h2>  
-    <div class="grid"></div>  
-  </section>  
-
-  <!-- Products Section -->
-  <section class="section" id="dynamic-products" style="padding:40px 20px;">  
+  <section class="section" id="collections">  
     <div class="container">  
-      <h2 style="color:gold;text-align:center;">Our Latest Products</h2>  
+      <h2>Featured</h2>  
+      <div class="grid"></div>  
+    </div>  
+  </section>  
+
+  <!-- PRODUCTS SECTION -->  
+  <section class="section" id="dynamic-products">  
+    <div class="container">  
+      <h2>Our Latest Products</h2>  
       <div id="products"></div>  
     </div>  
   </section>  
 
-  <!-- CART SECTION - placed just below products -->
-  <section class="section" id="cart" style="padding:40px 20px;background:#111;">  
+  <!-- CART SECTION (just below Our Latest Products) -->  
+  <section class="section" id="cart">  
     <div class="container">  
-      <h2 style="color:gold;text-align:center;">Your Cart</h2>  
-      <div id="cart-items" style="background:#000;padding:15px;border-radius:10px;margin-bottom:10px;"></div>  
-      <div id="cart-total" style="font-weight:bold;color:gold;margin-bottom:8px;text-align:center;">Total: Rs 0</div>  
-      <div style="display:flex;justify-content:center;gap:10px;">  
+      <h2>Your Cart</h2>  
+      <div id="cart-items" style="background:#111;padding:15px;border-radius:10px;margin-bottom:10px;color:white;"></div>  
+      <div id="cart-total" style="font-weight:bold;color:gold;margin-bottom:8px;">Total: Rs 0</div>  
+      <div style="display:flex;gap:10px;">  
         <button class="btn" onclick="checkoutOrder()">Checkout</button>  
         <button class="btn btn-small" onclick="clearCart()" style="background:#333;color:#fff;">Clear Cart</button>  
       </div>  
-      <div id="order-message" style="margin-top:10px;color:#8f8;text-align:center;"></div>  
+      <div id="order-message" style="margin-top:10px;color:#8f8;"></div>  
     </div>  
   </section>  
 
-  <!-- WHY CHOOSE LUXE -->
-  <section class="section" id="about" style="padding:40px 20px;">  
+  <!-- WHY CHOOSE LUXE -->  
+  <section class="section" id="about">  
     <div class="container">  
-      <h2 style="text-align:center;color:gold;">Why Choose LUXE</h2>  
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;text-align:center;margin-top:20px;">  
-        <div class="card" style="background:#111;padding:20px;border-radius:10px;">  
-          <h3>Free Shipping</h3>  
-        </div>  
-        <div class="card" style="background:#111;padding:20px;border-radius:10px;">  
-          <h3>Secure Payments</h3>  
-        </div>  
-        <div class="card" style="background:#111;padding:20px;border-radius:10px;">  
-          <h3>Premium Support</h3>  
-        </div>  
+      <h2>Why Choose LUXE</h2>  
+      <div class="grid">  
+        <div class="card"><h3>Free Shipping</h3></div>  
+        <div class="card"><h3>Secure Payments</h3></div>  
+        <div class="card"><h3>Premium Support</h3></div>  
       </div>  
     </div>  
   </section>  
 
-  <!-- CONTACT -->
-  <section class="section" id="contact" style="padding:40px 20px;background:#111;">  
+  <!-- CONTACT SECTION -->  
+  <section class="section" id="contact">  
     <div class="container">  
-      <h2 style="text-align:center;color:gold;">Contact Us</h2>  
-      <form onsubmit="alert('Message sent (demo)');return false;" style="max-width:400px;margin:0 auto;">  
-        <label>Your Name</label><input type="text" required style="width:100%;padding:8px;margin-bottom:8px;"/>  
-        <label>Your Email</label><input type="email" required style="width:100%;padding:8px;margin-bottom:8px;"/>  
-        <label>Your Message</label><textarea rows="4" style="width:100%;padding:8px;margin-bottom:10px;"></textarea>  
-        <button class="btn" type="submit" style="width:100%;">Send Message</button>  
-      </form>  
+      <h2>Contact Us</h2>  
+      <div class="contact-form">  
+        <form action="#" method="POST" onsubmit="alert('Message sent (demo)');return false;">  
+          <label>Your Name</label><input type="text" name="name" required />  
+          <label>Your Email</label><input type="email" name="email" required />  
+          <label>Your Message</label><textarea name="message" rows="5"></textarea>  
+          <div style="text-align:center;margin-top:12px">  
+            <button class="btn" type="submit">Send Message</button>  
+          </div>  
+        </form>  
+      </div>  
     </div>  
   </section>  
 
-  <footer style="text-align:center;padding:20px;background:#000;border-top:1px solid #222;color:#bbb;">  
-    © 2025 The Luxe Store — All Rights Reserved.  
-  </footer>  
+  <footer>© 2025 The Luxe Store — All Rights Reserved.</footer>  
 
-  <!-- Supabase + Cart Logic -->
+  <!-- Supabase + Cart Script -->  
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>  
   <script>  
     const SUPABASE_URL = 'https://meqbcuidksqwdmaqwvwc.supabase.co';  
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';  
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lcWJjdWlka3Nxd2RtYXF3dndjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0MjU2MjMsImV4cCI6MjA3NjAwMTYyM30.HYdIGrRMwlOkiQkYBsUcIvPeVF2oAAUNPj8V-8PKuvs';  
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);  
+
     let cart = [];  
 
     async function loadProducts() {  
-      const { data, error } = await supabase.from('products').select('*');  
-      if (error) { console.error(error); return; }  
+      const { data, error } = await supabase.from('products').select('*').order('id', { ascending: true });  
+      if (error) { console.error('Error:', error); return; }  
       renderProducts(data);  
     }  
 
@@ -117,72 +118,85 @@
       root.innerHTML = '';  
       const container = document.createElement('div');  
       container.style.display = 'grid';  
-      container.style.gridTemplateColumns = 'repeat(auto-fit,minmax(250px,1fr))';  
+      container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(250px, 1fr))';  
       container.style.gap = '20px';  
+      container.style.padding = '20px';  
+      container.style.color = 'white';  
 
       products.forEach(p => {  
-        const price = Number(p.price)||0;  
         const card = document.createElement('div');  
-        card.style.background = '#111';  
         card.style.border = '1px solid gold';  
-        card.style.borderRadius = '10px';  
-        card.style.padding = '10px';  
+        card.style.borderRadius = '12px';  
+        card.style.padding = '12px';  
+        card.style.background = '#111';  
+        card.style.textAlign = 'center';  
         card.innerHTML = `  
-          <img src="${p.image}" width="220" height="220" style="border-radius:10px;object-fit:cover;"><br>  
-          <strong>${p.name}</strong><br>  
-          <span style="color:gold;">Rs ${price}</span><br>  
-          <p>${p.description}</p>  
-          <button class="btn" onclick="addToCart('${p.id}','${p.name}',${price})">Add to Cart</button>  
+          <img src="${p.image}" width="220" height="220" style="border-radius:10px;margin-bottom:10px;object-fit:cover;"/><br/>  
+          <strong style="color:#ffd700">${p.name}</strong><br/>  
+          <span style="color:#e6c200">Rs ${p.price}</span><br/>  
+          <p style="color:rgba(255,255,255,0.7);min-height:40px">${p.description || ''}</p>  
+          <button class="btn" onclick="addToCart('${p.id}','${p.name}', ${p.price})">Add to Cart</button>  
         `;  
         container.appendChild(card);  
       });  
       root.appendChild(container);  
     }  
 
-    function addToCart(id, name, price){  
-      const existing = cart.find(x=>x.id===id);  
-      if(existing) existing.qty++; else cart.push({id,name,price,qty:1});  
+    function addToCart(id, name, price) {  
+      const item = cart.find(x => x.id === id);  
+      if (item) item.qty++;  
+      else cart.push({ id, name, price, qty: 1 });  
       updateCartDisplay();  
     }  
 
-    function removeFromCart(id){  
-      cart = cart.filter(x=>x.id!==id);  
+    function removeFromCart(id) {  
+      cart = cart.filter(x => x.id !== id);  
       updateCartDisplay();  
     }  
 
-    function clearCart(){ cart=[]; updateCartDisplay(); }  
+    function clearCart() {  
+      if (!confirm('Clear all items?')) return;  
+      cart = [];  
+      updateCartDisplay();  
+    }  
 
-    function updateCartDisplay(){  
-      const cartContainer=document.getElementById('cart-items');  
-      cartContainer.innerHTML='';  
-      let total=0;  
-      if(cart.length===0){  
-        cartContainer.innerHTML='<div style="color:#888;text-align:center;">Your cart is empty.</div>';  
-      }else{  
-        cart.forEach(item=>{  
-          total+=item.price*item.qty;  
-          const row=document.createElement('div');  
-          row.className='cart-line';  
-          row.innerHTML=`  
-            <div>${item.name} x${item.qty}</div>  
-            <div>Rs ${item.price*item.qty}  
-              <button class="btn-small" onclick="removeFromCart('${item.id}')" style="background:#c33;color:#fff;margin-left:8px;">Remove</button>  
-            </div>`;  
+    function updateCartDisplay() {  
+      const cartContainer = document.getElementById('cart-items');  
+      cartContainer.innerHTML = '';  
+      let total = 0;  
+      if (cart.length === 0) {  
+        cartContainer.innerHTML = '<div style="color:#aaa">Your cart is empty.</div>';  
+      } else {  
+        cart.forEach(item => {  
+          total += item.price * item.qty;  
+          const row = document.createElement('div');  
+          row.className = 'cart-line';  
+          row.innerHTML = `  
+            <div style="flex:1">${item.name} <small style="color:#bbb">x${item.qty}</small></div>  
+            <div style="min-width:140px;text-align:right">  
+              <span>Rs ${item.price * item.qty}</span>  
+              <button onclick="removeFromCart('${item.id}')" class="btn btn-small" style="margin-left:6px;background:#c33;color:#fff;">Remove</button>  
+            </div>  
+          `;  
           cartContainer.appendChild(row);  
         });  
       }  
-      document.getElementById('cart-total').innerText='Total: Rs '+total;  
+      document.getElementById('cart-total').innerText = 'Total: Rs ' + total;  
     }  
 
-    async function checkoutOrder(){  
-      if(cart.length===0){alert('Cart is empty');return;}  
-      const name=prompt('Enter your name:');  
-      if(!name)return;  
-      const email=prompt('Enter your email:');  
-      const total=cart.reduce((s,i)=>s+i.price*i.qty,0);  
-      const { data,error }=await supabase.from('orders').insert([{items:cart,total,customer_name:name,customer_email:email||null}]).select();  
-      if(error){alert('Error saving order');console.error(error);}  
-      else{document.getElementById('order-message').innerText='Order placed successfully!';cart=[];updateCartDisplay();}  
+    async function checkoutOrder() {  
+      if (cart.length === 0) { alert('Cart is empty'); return; }  
+      const name = prompt('Enter your name:');  
+      if (!name) return;  
+      const email = prompt('Enter your email (optional):');  
+      const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);  
+      const order = { items: cart, total, customer_name: name, customer_email: email || null };  
+      const { error } = await supabase.from('orders').insert([order]);  
+      if (error) alert('Error saving order');  
+      else {  
+        document.getElementById('order-message').innerText = 'Order placed successfully!';  
+        cart = []; updateCartDisplay();  
+      }  
     }  
 
     loadProducts();  
