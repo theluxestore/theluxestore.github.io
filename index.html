@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,11 +8,16 @@
   <meta name="description" content="Premium Online Shopping at The Luxe Store" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    .btn { background:#ffd700; color:#000; padding:8px 12px; border-radius:8px; border:none; cursor:pointer; font-weight:700; }
+    body { background:#000; color:white; font-family:Arial, sans-serif; margin:0; }
+    header, footer { text-align:center; padding:10px; background:#111; }
+    .btn { background:#ffd700; color:#000; padding:8px 12px; border-radius:8px; border:none; cursor:pointer; font-weight:700; transition:0.3s; }
+    .btn:hover { background:#e6c200; }
     .btn-small { padding:6px 10px; font-size:13px; border-radius:6px; }
     .cart-line { display:flex; justify-content:space-between; gap:10px; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.03); }
     #checkout-form { background:#111; color:white; padding:15px; border-radius:10px; display:none; margin-top:15px; }
     #checkout-form input, #checkout-form textarea { width:100%; padding:8px; margin-bottom:10px; border-radius:6px; border:none; }
+    .popup { position:fixed; top:20px; right:20px; background:#0a0; color:white; padding:12px 18px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.4); animation:fade 4s forwards; }
+    @keyframes fade { 0%{opacity:1;} 90%{opacity:1;} 100%{opacity:0; transform:translateY(-20px);} }
   </style>
 </head>
 <body>
@@ -32,7 +38,7 @@
     </div>
   </header>
 
-  <section class="hero" id="home" aria-label="Hero">
+  <section class="hero" id="home">
     <div class="hero-inner">
       <h1>Premium Online Shopping at THE LUXE</h1>
       <p>Shop Top Brands in Electronics, Fashion, Cosmetics & More — Best Deals with Fast Shipping</p>
@@ -47,7 +53,6 @@
     </div>
   </section>
 
-  <!-- PRODUCTS -->
   <section class="section" id="dynamic-products">
     <div class="container">
       <h2>Our Latest Products</h2>
@@ -55,7 +60,6 @@
     </div>
   </section>
 
-  <!-- CART -->
   <section class="section" id="cart">
     <div class="container">
       <h2>Your Cart</h2>
@@ -79,7 +83,6 @@
     </div>
   </section>
 
-  <!-- WHY CHOOSE LUXE -->
   <section class="section" id="about">
     <div class="container">
       <h2>Why Choose LUXE</h2>
@@ -91,15 +94,14 @@
     </div>
   </section>
 
-  <!-- CONTACT -->
   <section class="section" id="contact">
     <div class="container">
       <h2>Contact Us</h2>
       <div class="contact-form">
-        <form action="#" method="POST" onsubmit="alert('Message sent (demo)');return false;">
-          <label>Your Name</label><input type="text" name="name" required />
-          <label>Your Email</label><input type="email" name="email" required />
-          <label>Your Message</label><textarea name="message" rows="5"></textarea>
+        <form onsubmit="alert('Message sent (demo)');return false;">
+          <label>Your Name</label><input type="text" required />
+          <label>Your Email</label><input type="email" required />
+          <label>Your Message</label><textarea rows="5"></textarea>
           <div style="text-align:center;margin-top:12px">
             <button class="btn" type="submit">Send Message</button>
           </div>
@@ -110,18 +112,21 @@
 
   <footer>© 2025 The Luxe Store — All Rights Reserved.</footer>
 
-  <!-- Supabase -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = 'https://meqbcuidksqwdmaqwvwc.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lcWJjdWlka3Nxd2RtYXF3dndjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0MjU2MjMsImV4cCI6MjA3NjAwMTYyM30.HYdIGrRMwlOkiQkYBsUcIvPeVF2oAAUNPj8V-8PKuvs';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let cart = [];
+    // Load cart from localStorage
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
     async function loadProducts() {
       const { data, error } = await supabase.from('products').select('*').order('id', { ascending: true });
-      if (error) { console.error(error); return; }
+      if (error) {
+        console.error(error);
+        return;
+      }
       renderProducts(data);
     }
 
@@ -132,6 +137,7 @@
       grid.style.display = 'grid';
       grid.style.gridTemplateColumns = 'repeat(auto-fit,minmax(250px,1fr))';
       grid.style.gap = '20px';
+
       products.forEach(p => {
         const card = document.createElement('div');
         card.style.border = '1px solid gold';
@@ -155,18 +161,25 @@
       const item = cart.find(x => x.id === id);
       if (item) item.qty++;
       else cart.push({ id, name, price, qty: 1 });
+      saveCart();
       updateCartDisplay();
     }
 
     function removeFromCart(id) {
       cart = cart.filter(x => x.id !== id);
+      saveCart();
       updateCartDisplay();
     }
 
     function clearCart() {
       if (!confirm('Clear all items?')) return;
       cart = [];
+      saveCart();
       updateCartDisplay();
+    }
+
+    function saveCart() {
+      localStorage.setItem('cart', JSON.stringify(cart));
     }
 
     function updateCartDisplay() {
@@ -185,8 +198,7 @@
             <div style="min-width:140px;text-align:right">
               <span>Rs ${i.price * i.qty}</span>
               <button onclick="removeFromCart('${i.id}')" class="btn btn-small" style="margin-left:6px;background:#c33;color:#fff;">Remove</button>
-            </div>
-          `;
+            </div>`;
           c.appendChild(row);
         });
       }
@@ -206,19 +218,48 @@
       const email = document.getElementById('cust-email').value.trim();
       const address = document.getElementById('cust-address').value.trim();
       const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
-      const order = { items: cart, total, customer_name: name, customer_phone: phone, customer_email: email, customer_address: address };
+
+      const order = {
+        customer_name: name,
+        customer_phone: phone,
+        customer_email: email,
+        customer_address: address,
+        items: cart,
+        total,
+        created_at: new Date().toISOString()
+      };
+
       const { error } = await supabase.from('orders').insert([order]);
-      if (error) alert('Error saving order');
-      else {
-        document.getElementById('order-message').innerText = '✅ Order placed successfully! We will contact you soon.';
+      if (error) {
+        console.error("Error saving order:", error);
+        alert("❌ Error saving order. Check console for details.");
+      } else {
+        showSuccessPopup(total);
+        sendWhatsApp(order);
         cart = [];
+        saveCart();
         updateCartDisplay();
         document.getElementById('checkout-form').reset();
         document.getElementById('checkout-form').style.display = 'none';
       }
     }
 
+    function showSuccessPopup(total) {
+      const popup = document.createElement('div');
+      popup.className = 'popup';
+      popup.innerText = `✅ Order confirmed! Total Rs ${total}`;
+      document.body.appendChild(popup);
+      setTimeout(() => popup.remove(), 4000);
+    }
+
+    function sendWhatsApp(order) {
+      const msg = `🛍️ *New Luxe Store Order*\n\n👤 Name: ${order.customer_name}\n📞 Phone: ${order.customer_phone}\n🏠 Address: ${order.customer_address}\n💰 Total: Rs ${order.total}`;
+      const url = `https://wa.me/923000000000?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    }
+
     loadProducts();
+    updateCartDisplay();
   </script>
 </body>
 </html>
